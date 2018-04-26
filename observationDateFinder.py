@@ -12,7 +12,7 @@ Might show deviations in the last shown digit due to numerical artifacts
 
     try:
         tlist = cdate.split('T')[1].split(':')
-        time = int(tlist[0])/24 + int(tlist[1])/1440 + float(tlist[2])/86400
+        time = int(tlist[0])/24 + int(tlist[1])/1440 + float(tlist[2])/86400 - 0.5
     except IndexError:
         time = 0
 
@@ -45,6 +45,9 @@ converts a julian day number back do a gregorian calendar date
     jtime = jdate%1
     hour = int((12 + 24*jtime)//1)
     jtime -= (hour - 12)/24
+    if hour>=24:
+        day += 1
+        hour -= 24
 
     minute = int((60*jtime)//1)
     jtime -= minute/60
@@ -97,5 +100,7 @@ optional parameters
     return transitdates
 
 if __name__ == '__main__':
-    print(gregorianToJulian('2018-04-19T15:08:01'))
+    testdate = '2018-04-26'#T15:08:09'
+    print(gregorianToJulian(testdate))
+    print(julianToGregorian(gregorianToJulian(testdate)))
     print(findTransitDate(2453957.635486, 2.470613402, cstart='2018-05-07', cend='2018-05-21'))
