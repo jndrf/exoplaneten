@@ -39,7 +39,7 @@ converts a julian day number back do a gregorian calendar date
     day = int((h % 153) // 5 + 1)
     month = int((h//153 + 2)%12 + 1)
     year = int(e//1461 - 4716 + (14 - month) // 12)
-    cday = '{}-{}-{}'.format(year, month, day)
+    cday = '{}-{:02d}-{:02d}'.format(year, month, day)
 
     jtime = jdate%1
     hour = int((12 + 24*jtime)//1)
@@ -52,7 +52,7 @@ converts a julian day number back do a gregorian calendar date
 
     second = round(86400*jtime)
 
-    ctime = '{}:{}:{}'.format(hour, minute, second)
+    ctime = '{:02d}:{:02d}:{}'.format(hour, minute, second)
 
     return 'T'.join([cday, ctime])
 
@@ -63,7 +63,6 @@ Gives times of planet transits as list (julian date)
 @param period: orbital period (days)
 
 optional parameters
-@param calendaric: return list of calendar dates if true
 @param start: start of observation period (julian date) use cstart for gregorian date
 @param end: end of observation period, cend for gregorian date
 @param n_transits: number of transits to show
@@ -99,7 +98,18 @@ if __name__ == '__main__':
     # testdate = '1994-12-17T18:19:20.3'
     # print(gregorianToJulian(testdate))
     # print(julianToGregorian(gregorianToJulian(testdate)))
-    
 
-    findTransitDate(2453957.635486, 2.470613402, cstart='2018-05-07', cend='2018-05-21')
-    
+    exoplanets = [
+        {'name':'TrES-2', 'reference':2453957.635486, 'period':2.470613402, 'duration':1.83},
+        {'name':'Qatar-1', 'reference':2.470613402, 'period':1.42003, 'duration':1.6 },
+        {'name':'WASP-135', 'reference':2455230.9902, 'period':1.4013794, 'duration':1.7},
+        {'name':'WASP-14', 'reference':2454463.57583, 'period':2.243752, 'duration':3.1},
+        {'name':'Tres-5', 'reference':2455443.25153, 'period':1.4822446, 'duration':1.8}
+    ]
+
+    for planet in exoplanets:
+        print(planet['name'])
+        for transit in findTransitDate(planet['reference'], planet['period'], cstart='2018-05-07', cend='2018-05-21'):
+            print(julianToGregorian(transit))
+
+        print('\n\n----------')
