@@ -1,3 +1,13 @@
+def timeToJulian(stime):
+    '''
+converts a hh:mm:ss time string to the fraction of a day
+    '''
+    tlist = stime.split(':')
+
+    time = int(tlist[0])/24 + int(tlist[1])/1440 + float(tlist[2])/86400
+
+    return time % 1
+
 def gregorianToJulian(cdate):
     '''
 Converts a calender date in format YYY-MM-DDThh:mm:ss to Julian Date
@@ -11,8 +21,7 @@ Might show deviations in the last shown digit due to numerical artifacts
     day = int(cdlist[2])
 
     try:
-        tlist = cdate.split('T')[1].split(':')
-        time = int(tlist[0])/24 + int(tlist[1])/1440 + float(tlist[2])/86400 
+        time = timeToJulian(cdate.split('T')[1])
     except IndexError:
         time = 0
 
@@ -94,11 +103,43 @@ optional parameters
     
     return transitdates
 
+def isObservable(jdate, dusk, dawn, duration, rim=1):
+    '''
+Checks whether the transit plus some more time happens between dusk and dawn
+
+@param jdate julian day number of transit
+@param dusk, dawn can be given as 'hh:mm:ss' or julian date
+@param duration duration of the transit in hours
+@param rim additional time at each end in hours
+    '''
+    time = jdate % 1
+
+    jdusk = 'no time set'
+    if type(dusk) == float:
+        jdusk = dusk % 1
+    elif type(dusk) == str:
+        stime = dusk.split(':')
+        jdusk = timeToJulian(dusk)
+
+    if type(dawn) == float:
+        jdawn = dawn % 1
+    elif type(dawn) == str:
+        jdawn = timeToJulian(dawn)
+
+    # print(jdawn)
+    # print(time)
+    # print('end   ', (time + duration/48 + 1/24))
+    # print('start ', (time - duration/48 - 1/24))
+    return ((time + duration/48 + rim/24)%1) > jdawn and ((time - duration/48 - rim/24) %1 )< jdusk
+
 if __name__ == '__main__':
     # testdate = '1994-12-17T18:19:20.3'
+    # print(testdate)
     # print(gregorianToJulian(testdate))
     # print(julianToGregorian(gregorianToJulian(testdate)))
 
+    # print(timeToJulian(testdate.split('T')[1]))
+    print(isObservable(gregorianToJulian('2012-09-09T02:29:08'), '22:00:00', '04:00:00', 1))
     exoplanets = [
         {'name':'TrES-2', 'reference':2453957.635486, 'period':2.470613402, 'duration':1.83},
         {'name':'Qatar-1', 'reference':2.470613402, 'period':1.42003, 'duration':1.6 },
@@ -110,6 +151,6 @@ if __name__ == '__main__':
     for planet in exoplanets:
         print(planet['name'])
         for transit in findTransitDate(planet['reference'], planet['period'], cstart='2018-05-07', cend='2018-05-21'):
-            print(julianToGregorian(transit))
+            print(julianToGregorian(transit), '  ', isObservable(transit, '22:00:00', '04:00:00', 1))
 
         print('\n\n----------')
