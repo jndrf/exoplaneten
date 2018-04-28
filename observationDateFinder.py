@@ -1,4 +1,4 @@
-def timeToJulian(stime):
+def fractionOfDay(stime):
     '''
 converts a hh:mm:ss time string to the fraction of a day
     '''
@@ -10,10 +10,9 @@ converts a hh:mm:ss time string to the fraction of a day
 
 def gregorianToJulian(cdate):
     '''
-Converts a calender date in format YYY-MM-DDThh:mm:ss to Julian Date
-Accepts only years in the gregorian calendar, i.e. years after 1582.
-
-Might show deviations in the last shown digit due to numerical artifacts
+Converts a calender date in format YYY-MM-DDThh:mm:ss to Julian Day Number
+Accepts only years after 1582 and assumes the calendar to be gregorian
+Time can be omitted
     '''
     cdlist = cdate.split('T')[0].split('-')
     year = int(cdlist[0])
@@ -21,7 +20,7 @@ Might show deviations in the last shown digit due to numerical artifacts
     day = int(cdlist[2])
 
     try:
-        time = timeToJulian(cdate.split('T')[1])
+        time = fractionOfDay(cdate.split('T')[1])
     except IndexError:
         time = 0
 
@@ -39,7 +38,9 @@ Might show deviations in the last shown digit due to numerical artifacts
 
 def julianToGregorian(jdate):
     '''
-converts a julian day number back do a gregorian calendar date
+converts a julian day number back to a gregorian calendar date
+
+@return string yyyy-mm-ddThh:mm:ss number of year digits not constrained
     '''
     f = jdate + 1401 + (((4*jdate + 274277)//146097)*3)//4 -38
     e = 4*f + 3
@@ -103,44 +104,29 @@ optional parameters
     
     return transitdates
 
-def isObservable(jdate, dusk, dawn, duration, rim=1):
+
+def isObservable(jdate, dusk, dawn, duration=1, rim=1):
     '''
-Checks whether the transit plus some more time happens between dusk and dawn
+Checks whether the transit at jdate is observable, i.e. whole of 
+transit plus rim hours (default one) at each end is between dusk and dawn.
 
-@param jdate julian day number of transit
-@param dusk, dawn can be given as 'hh:mm:ss' or julian date
-@param duration duration of the transit in hours
-@param rim additional time at each end in hours
+@param dusk, dawn: times given in 'hh:mm:ss' format
+@param duration: duration of transit in hours
     '''
-    time = jdate % 1
+    jdusk = fractionOfDay(dusk) + .5     # 'cause midnight is at .5
+    jdawn = fractionOfDay(dawn) + .5
 
-    jdusk = 'no time set'
-    if type(dusk) == float:
-        jdusk = dusk % 1
-    elif type(dusk) == str:
-        stime = dusk.split(':')
-        jdusk = timeToJulian(dusk)
+    jdusk = jdusk % 1
+    jdawn = jdawn % 1
 
-    if type(dawn) == float:
-        jdawn = dawn % 1
-    elif type(dawn) == str:
-        jdawn = timeToJulian(dawn)
+    ostart = (jdate - duration/48 - rim /24) %1
+    oend = (jdate + duration/48 + rim /24) %1
 
-    # print(jdawn)
-    # print(time)
-    # print('end   ', (time + duration/48 + 1/24))
-    # print('start ', (time - duration/48 - 1/24))
-    return ((time + duration/48 + rim/24)%1) > jdawn and ((time - duration/48 - rim/24) %1 )< jdusk
+    # print('jdusk {}\njdawn {}\nostart {}\noend  {}'.format(jdusk, jdawn, ostart, oend))
+    return ostart > jdusk and ostart < jdawn and oend > jdusk and oend < jdawn
 
 if __name__ == '__main__':
-    # testdate = '1994-12-17T18:19:20.3'
-    # print(testdate)
-    # print(gregorianToJulian(testdate))
-    # print(julianToGregorian(gregorianToJulian(testdate)))
-
-    # print(timeToJulian(testdate.split('T')[1]))
-    print(isObservable(gregorianToJulian('2012-09-09T02:29:08'), '22:00:00', '04:00:00', 1))
-    exoplanets = [
+    exoplanets = [              # List of exoplanets. period in days, duration in hours
         {'name':'TrES-2', 'reference':2453957.635486, 'period':2.470613402, 'duration':1.83},
         {'name':'Qatar-1', 'reference':2.470613402, 'period':1.42003, 'duration':1.6 },
         {'name':'WASP-135', 'reference':2455230.9902, 'period':1.4013794, 'duration':1.7},
@@ -148,9 +134,16 @@ if __name__ == '__main__':
         {'name':'Tres-5', 'reference':2455443.25153, 'period':1.4822446, 'duration':1.8}
     ]
 
+    print('''
+Observable Transits between 2018-05-07 and 2018-05-21. (Planet list hardcoded)
+Times for Dusk and Dawn are from the last observation day for the Calo Alto Observatory.
+All times are UT.
+Shows only transits between dusk and dawn.
+    ''')
     for planet in exoplanets:
         print(planet['name'])
         for transit in findTransitDate(planet['reference'], planet['period'], cstart='2018-05-07', cend='2018-05-21'):
-            print(julianToGregorian(transit), '  ', isObservable(transit, '22:00:00', '04:00:00', 1))
+            if isObservable(transit, '21:01:00', '03:11:00', 1):
+                print(julianToGregorian(transit))
 
         print('\n\n----------')
