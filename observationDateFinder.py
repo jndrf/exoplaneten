@@ -126,10 +126,11 @@ Checks whether the transit plus some more time happens between dusk and dawn
     elif type(dawn) == str:
         jdawn = timeToJulian(dawn)
 
-    # print(jdawn)
-    # print(time)
-    # print('end   ', (time + duration/48 + 1/24))
-    # print('start ', (time - duration/48 - 1/24))
+    print(jdusk)
+    print(jdawn)
+    print(time)
+    print('end   ', (time + duration/48 + 1/24))
+    print('start ', (time - duration/48 - 1/24))
     return ((time + duration/48 + rim/24)%1) > jdawn and ((time - duration/48 - rim/24) %1 )< jdusk
 
 if __name__ == '__main__':
@@ -141,10 +142,10 @@ if __name__ == '__main__':
     # print(timeToJulian(testdate.split('T')[1]))
     print(isObservable(gregorianToJulian('2012-09-09T02:29:08'), '22:00:00', '04:00:00', 1))
     exoplanets = [
-        {'name':'TrES-2', 'reference':2453957.635486, 'period':2.470613402, 'duration':1.83},
-        {'name':'Qatar-1', 'reference':2.470613402, 'period':1.42003, 'duration':1.6 },
-        {'name':'WASP-135', 'reference':2455230.9902, 'period':1.4013794, 'duration':1.7},
-        {'name':'WASP-14', 'reference':2454463.57583, 'period':2.243752, 'duration':3.1},
+        # {'name':'TrES-2', 'reference':2453957.635486, 'period':2.470613402, 'duration':1.83},
+        # {'name':'Qatar-1', 'reference':2.470613402, 'period':1.42003, 'duration':1.6 },
+        # {'name':'WASP-135', 'reference':2455230.9902, 'period':1.4013794, 'duration':1.7},
+        # {'name':'WASP-14', 'reference':2454463.57583, 'period':2.243752, 'duration':3.1},
         {'name':'Tres-5', 'reference':2455443.25153, 'period':1.4822446, 'duration':1.8}
     ]
 
