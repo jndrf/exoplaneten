@@ -76,8 +76,6 @@ optional parameters
 @param start: start of observation period (julian date) use cstart for gregorian date
 @param end: end of observation period, cend for gregorian date
 @param n_transits: number of transits to show
-
-@bug first entry of returned list may be before start date
     '''
     if 'start' in kwargs:
         n_min = (kwargs['start'] - refValue)//period
@@ -135,10 +133,9 @@ if __name__ == '__main__':
     ]
 
     print('''
-Observable Transits between 2018-05-07 and 2018-05-21. (Planet list hardcoded)
+Night-time transits between 2018-05-07 and 2018-05-21. (Planet list hardcoded)
 Times for Dusk and Dawn are from the last observation day for the Calo Alto Observatory.
 All times are UT.
-Shows only transits between dusk and dawn.
     ''')
     for planet in exoplanets:
         print(planet['name'])
