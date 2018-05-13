@@ -161,21 +161,26 @@ def isObservable(jdate, dusk, dawn, duration=1, rim=1):
 
 if __name__ == '__main__':
     exoplanets = [              # List of exoplanets. period in days, duration in hours
-        {'name':'TrES-2', 'reference':2453957.635486, 'period':2.470613402, 'duration':1.83},
+        {'name':'TRES-2', 'reference':2453957.635486, 'period':2.470613402, 'duration':1.83},
         {'name':'Qatar-1', 'reference':2455518.4102, 'period':1.42003, 'duration':1.6 },
         {'name':'WASP-135', 'reference':2455230.9902, 'period':1.4013794, 'duration':1.7},
         {'name':'WASP-14', 'reference':2454463.57583, 'period':2.243752, 'duration':3.1},
-        {'name':'Tres-5', 'reference':2455443.25153, 'period':1.4822446, 'duration':1.8}
+        {'name':'Tres-5', 'reference':2455443.25153, 'period':1.4822446, 'duration':1.8},
+        {'name':'HAT0P-37', 'reference':2455642.14318, 'period':2.7973600, 'duration':2.33},
+        {'name':'TrES-3b', 'reference':2454185.91010, 'period':1.306190, 'duration':1.3536},
+        {'name':'HAT-P-18b', 'reference':2454715.02174, 'period':5.5080230, 'duration':2.7144},
+        {'name':'HAT-P-5b', 'reference':2454241.77663, 'period':2.788491, 'duration':2.9208},
+        {'name':'TrES-1b', 'reference':2453901.90372, 'period':3.0300650, 'duration':2.5128}
     ]
 
     print('''
-Night-time transits between 2018-05-07 and 2018-05-21. (Planet list hardcoded)
+Night-time transits between 2018-05-15 and 2018-05-21. (Planet list hardcoded)
 Times for Dusk and Dawn are from the last observation day for the Calo Alto Observatory.
 All times are UT.
     ''')
     for planet in exoplanets:
         print(planet['name'])
-        for transit in findTransitDate(planet['reference'], planet['period'], cstart='2018-05-07', cend='2018-05-21'):
+        for transit in findTransitDate(planet['reference'], planet['period'], cstart='2018-05-15', cend='2018-05-21'):
             if isObservable(transit, '21:01:00', '03:11:00', 1):
                 print(julianToGregorian(transit))
 
