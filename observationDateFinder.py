@@ -181,7 +181,7 @@ All times are UT.
     for planet in exoplanets:
         print(planet['name'])
         for transit in findTransitDate(planet['reference'], planet['period'], cstart='2018-05-15', cend='2018-05-21'):
-            if isObservable(transit, '21:01:00', '03:11:00', 1):
+            if isObservable(transit, '21:01:00', '03:11:00', planet['duration']):
                 print(julianToGregorian(transit))
 
         print('\n----------')
