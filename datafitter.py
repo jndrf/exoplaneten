@@ -19,8 +19,8 @@ still wont fit it.
 
     functions = [
         lambda t: iTransit  + np.exp(t*duskParam),
-        lambda t: (iTransit + (iStar - iTransit)/(t4thContact - t3rdContact) * (t - t3rdContact)) + np.exp(t*duskParam),
-        lambda t: iStar + np.exp(t*duskParam)
+        lambda t: (iTransit + np.exp(t*duskParam) + (iStar - iTransit - np.exp(t*duskParam))/(t4thContact - t3rdContact) * (t - t3rdContact)),
+        lambda t: iStar# + np.exp(t*duskParam)
     ]
 
     return np.piecewise(t, conditions, functions)
